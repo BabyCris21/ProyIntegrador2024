@@ -14,16 +14,6 @@ const LoginScreen = () => {
       </Text>
 
       <Input
-        placeholder="Nombre de la Cancha"
-        containerStyle={{ marginBottom: 10 }}
-        inputContainerStyle={{
-          borderRadius: 10,
-          borderColor: "#ccc",
-          borderWidth: 1,
-        }}
-        inputStyle={{ padding: 10 }}
-      />
-      <Input
         placeholder="Correo electrónico"
         containerStyle={{ marginBottom: 10 }}
         inputContainerStyle={{
