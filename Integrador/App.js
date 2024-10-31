@@ -3,7 +3,8 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./Screens/LoginScreen";
-// Importa otras pantallas si tienes más
+import RegisterScreen from "./Screens/RegisterScreen";
+import RecoverPassword from "./Screens/RecoverPassword";
 
 const Stack = createStackNavigator();
 
@@ -15,6 +16,16 @@ export default function App() {
           name="Login"
           component={LoginScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ title: "Registro" }}
+        />
+        <Stack.Screen
+          name="RecoverPassword"
+          component={RecoverPassword}
+          options={{ title: "Recuperar Contraseña" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
