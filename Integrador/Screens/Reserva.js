@@ -8,8 +8,9 @@ import {
   Modal,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // Importación de Picker
+import { Picker } from "@react-native-picker/picker";
 
 const canchasData = [
   {
@@ -54,17 +55,53 @@ const ReservaCancha = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCancha, setSelectedCancha] = useState(null);
   const [selectedHorario, setSelectedHorario] = useState("");
+  const [paymentOption, setPaymentOption] = useState(""); // Opción de pago
+  const [creditCardDetails, setCreditCardDetails] = useState({
+    cardNumber: "",
+    cardHolder: "",
+    expirationDate: "",
+    cvv: "",
+  });
+  const [transactionSummaryVisible, setTransactionSummaryVisible] =
+    useState(false);
+  const [transactionDetails, setTransactionDetails] = useState({});
 
   const filteredCanchas = canchasData.filter((cancha) =>
     cancha.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleReservar = () => {
-    // Aquí puedes añadir la lógica para reservar el horario
-    console.log(`Reservado: ${selectedCancha.nombre} a las ${selectedHorario}`);
-    // Cerrar el modal después de reservar
-    setModalVisible(false);
-    setSelectedHorario(""); // Opcional: Reiniciar selección de horario
+    if (paymentOption === "Yape" || paymentOption === "Plin") {
+      Alert.alert("Escanea el QR", "Nombre del titular: Nayeli De la Cruz", [
+        { text: "OK", onPress: () => setModalVisible(false) },
+      ]);
+    } else if (paymentOption === "Tarjeta") {
+      setTransactionSummaryVisible(true);
+    }
+  };
+
+  const handleCreditCardSubmit = () => {
+    const summary = {
+      cardNumber: creditCardDetails.cardNumber.replace(/.(?=.{4})/g, "*"), // Blurred number
+      date: new Date().toLocaleDateString(),
+      time: selectedHorario,
+      name: creditCardDetails.cardHolder,
+    };
+    setTransactionDetails(summary);
+    setTransactionSummaryVisible(true);
+  };
+
+  const confirmReservation = () => {
+    Alert.alert("Confirmación", "¿Está seguro de que desea reservar?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Confirmar",
+        onPress: () => {
+          Alert.alert("La cancha está reservada");
+          setModalVisible(false);
+        },
+      },
+    ]);
   };
 
   const renderCancha = ({ item }) => (
@@ -78,7 +115,7 @@ const ReservaCancha = () => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            /* lógica para añadir a favoritos */
+            console.log(`Añadido a favoritos: ${item.nombre}`);
           }}
         >
           <Text>Añadir a Favoritos</Text>
@@ -86,7 +123,7 @@ const ReservaCancha = () => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            /* lógica para ver ubicación */
+            console.log(`Ver ubicación de: ${item.nombre}`);
           }}
         >
           <Text>Ver Ubicación</Text>
@@ -128,7 +165,7 @@ const ReservaCancha = () => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Image
-                source={{ uri: selectedCancha.imagen }} // Imagen de la cancha
+                source={{ uri: selectedCancha.imagen }}
                 style={styles.image}
               />
               <Text style={styles.modalTitle}>{selectedCancha.nombre}</Text>
@@ -162,16 +199,117 @@ const ReservaCancha = () => {
                   <Picker.Item key={horario} label={horario} value={horario} />
                 ))}
               </Picker>
-              <TouchableOpacity
-                style={styles.reserveButton} // Estilo para el botón de reservar
-                onPress={handleReservar} // Llama a la función para reservar
-                disabled={!selectedHorario} // Deshabilitar si no hay horario seleccionado
+
+              <Text style={styles.selectLabel}>
+                Selecciona un Método de Pago:
+              </Text>
+              <Picker
+                selectedValue={paymentOption}
+                style={styles.picker}
+                onValueChange={(itemValue) => setPaymentOption(itemValue)}
               >
-                <Text style={{ color: "white" }}>Reservar</Text>
+                <Picker.Item label="Selecciona" value="" />
+                <Picker.Item label="Yape" value="Yape" />
+                <Picker.Item label="Plin" value="Plin" />
+                <Picker.Item label="Tarjeta" value="Tarjeta" />
+              </Picker>
+
+              {paymentOption === "Tarjeta" && (
+                <View>
+                  <TextInput
+                    placeholder="Número de tarjeta"
+                    style={styles.input}
+                    value={creditCardDetails.cardNumber}
+                    onChangeText={(text) =>
+                      setCreditCardDetails({
+                        ...creditCardDetails,
+                        cardNumber: text,
+                      })
+                    }
+                  />
+                  <TextInput
+                    placeholder="Nombre del titular"
+                    style={styles.input}
+                    value={creditCardDetails.cardHolder}
+                    onChangeText={(text) =>
+                      setCreditCardDetails({
+                        ...creditCardDetails,
+                        cardHolder: text,
+                      })
+                    }
+                  />
+                  <TextInput
+                    placeholder="Fecha de expiración (MM/AA)"
+                    style={styles.input}
+                    value={creditCardDetails.expirationDate}
+                    onChangeText={(text) =>
+                      setCreditCardDetails({
+                        ...creditCardDetails,
+                        expirationDate: text,
+                      })
+                    }
+                  />
+                  <TextInput
+                    placeholder="CVV"
+                    style={styles.input}
+                    value={creditCardDetails.cvv}
+                    onChangeText={(text) =>
+                      setCreditCardDetails({ ...creditCardDetails, cvv: text })
+                    }
+                  />
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleCreditCardSubmit}
+                  >
+                    <Text>Confirmar Pago con Tarjeta</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              <TouchableOpacity style={styles.button} onPress={handleReservar}>
+                <Text>Reservar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {transactionSummaryVisible && (
+        <Modal
+          visible={transactionSummaryVisible}
+          animationType="slide"
+          onRequestClose={() => setTransactionSummaryVisible(false)}
+          transparent={true}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Resumen de la Transacción</Text>
+              {paymentOption === "Tarjeta" && (
+                <View>
+                  <Text>
+                    Número de Tarjeta: {transactionDetails.cardNumber}
+                  </Text>
+                  <Text>Nombre: {transactionDetails.name}</Text>
+                  <Text>Fecha: {transactionDetails.date}</Text>
+                  <Text>Hora: {selectedHorario}</Text>
+                </View>
+              )}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={confirmReservation}
+              >
+                <Text>Confirmar Reserva</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
+                style={styles.button}
+                onPress={() => setTransactionSummaryVisible(false)}
               >
                 <Text>Cerrar</Text>
               </TouchableOpacity>
@@ -186,44 +324,41 @@ const ReservaCancha = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 16,
   },
   searchInput: {
     borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 16,
   },
   canchaContainer: {
-    marginBottom: 20,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: "lightgray",
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center",
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 8,
   },
   canchaImage: {
     width: "100%",
-    height: 150,
-    borderRadius: 10,
-    marginBottom: 10,
+    height: 200,
+    borderRadius: 4,
   },
   canchaName: {
+    fontSize: 18,
     fontWeight: "bold",
-    marginVertical: 5,
+    marginVertical: 4,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
-    width: "100%",
   },
   button: {
-    backgroundColor: "#28a745",
+    backgroundColor: "#007BFF",
     padding: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
+    borderRadius: 4,
+    marginTop: 8,
   },
   modalOverlay: {
     flex: 1,
@@ -232,64 +367,45 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  image: {
-    width: "100%",
-    height: 150,
-    borderRadius: 10,
-    marginBottom: 10,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    width: "90%",
   },
   modalTitle: {
+    fontSize: 20,
     fontWeight: "bold",
-    fontSize: 18,
-    marginBottom: 10,
+    marginBottom: 16,
   },
   infoContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    width: "100%",
+    marginBottom: 16,
   },
   infoBox: {
-    width: "45%",
-    marginVertical: 5,
-    padding: 5,
-    borderWidth: 1,
-    borderColor: "lightgray",
-    borderRadius: 5,
+    marginBottom: 8,
   },
   infoLabel: {
-    fontWeight: "bold",
-  },
-  selectLabel: {
-    marginVertical: 10,
     fontWeight: "bold",
   },
   picker: {
     height: 50,
     width: "100%",
-    marginVertical: 10,
+    marginBottom: 16,
   },
-  reserveButton: {
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 10,
-    width: "100%",
-    alignItems: "center",
+  selectLabel: {
+    fontWeight: "bold",
+    marginBottom: 4,
   },
-  closeButton: {
-    backgroundColor: "#dc3545",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 10,
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 16,
+  },
+  image: {
     width: "100%",
-    alignItems: "center",
+    height: 200,
+    borderRadius: 4,
   },
 });
 
