@@ -239,7 +239,9 @@ const Reserva = () => {
                           cardNumber: text,
                         })
                       }
+                      keyboardType="numeric"
                     />
+
                     <TextInput
                       placeholder="Nombre del titular"
                       style={styles.input}
@@ -272,7 +274,7 @@ const Reserva = () => {
                           cvv: text,
                         })
                       }
-                      secureTextEntry
+                      keyboardType="numeric"
                     />
                   </View>
                 )}
@@ -294,36 +296,35 @@ const Reserva = () => {
         </Modal>
       )}
 
-      {/* Resumen de transacción */}
+      {/* Transaction Summary Modal */}
       <Modal
         visible={transactionSummaryVisible}
         animationType="slide"
-        onRequestClose={() => setTransactionSummaryVisible(false)}
         transparent={true}
+        onRequestClose={() => setTransactionSummaryVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Resumen de Transacción</Text>
-            {paymentOption === "Tarjeta" && (
-              <View>
-                <Text>Número de tarjeta: {transactionDetails.cardNumber}</Text>
-                <Text>Nombre: {transactionDetails.name}</Text>
-                <Text>Fecha: {transactionDetails.date}</Text>
-                <Text>Hora: {selectedHorario}</Text>
-              </View>
-            )}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={confirmReservation}
-            >
-              <Text>Confirmar Reserva</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setTransactionSummaryVisible(false)}
-            >
-              <Text>Cerrar</Text>
-            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Resumen de la Transacción</Text>
+            <Text>Número de tarjeta: {transactionDetails.cardNumber}</Text>
+            <Text>Fecha: {transactionDetails.date}</Text>
+            <Text>Hora: {transactionDetails.time}</Text>
+            <Text>Nombre del titular: {transactionDetails.name}</Text>
+
+            <View style={styles.rowButtonsContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={confirmReservation}
+              >
+                <Text>Confirmar Reserva</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setTransactionSummaryVisible(false)}
+              >
+                <Text>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -335,49 +336,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f8f8f8",
   },
   searchInput: {
-    height: 40,
-    borderColor: "gray",
     borderWidth: 1,
-    paddingLeft: 10,
-    marginBottom: 20,
+    borderColor: "#ccc",
     borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
   canchaContainer: {
-    backgroundColor: "white",
-    padding: 15,
-    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 5,
-    elevation: 2,
+    marginBottom: 20,
+    padding: 10,
   },
   canchaImage: {
     width: "100%",
-    height: 150,
+    height: 200,
     borderRadius: 5,
   },
   canchaName: {
     fontSize: 18,
     fontWeight: "bold",
+    marginVertical: 5,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  rowButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
+  },
+
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginVertical: 5,
+    flex: 1,
+    marginHorizontal: 5,
   },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
     width: "90%",
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    elevation: 5,
   },
   image: {
     width: "100%",
@@ -385,12 +398,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-  },
-  scrollContainer: {
-    maxHeight: 300,
   },
   infoContainer: {
     marginBottom: 20,
@@ -408,22 +418,25 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
     borderWidth: 1,
-    paddingLeft: 10,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
     marginBottom: 10,
+  },
+  closeButton: {
+    marginTop: 10,
+    padding: 10,
+    alignItems: "center",
+    backgroundColor: "#FF0000",
     borderRadius: 5,
   },
-  button: {
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    marginVertical: 5,
+
+  scrollContainer: {
+    maxHeight: 400, // Adjust as necessary to prevent overflow
   },
 });
 
