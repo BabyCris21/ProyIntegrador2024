@@ -16,11 +16,11 @@ import { Picker } from "@react-native-picker/picker";
 const canchasData = [
   {
     id: "1",
-    nombre: "Cancha A",
-    direccion: "Calle 123, Ciudad",
+    nombre: "Estadio Nacional",
+    direccion: "C. José Díaz s/n, Lima 15046",
     horarios: ["5 PM", "7 PM", "9 PM", "10 AM"],
     imagen:
-      "https://elcomercio.pe/resizer/kM-bAF_r94OzvqVKqKnDfMZSX6I=/1200x675/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/ZQ4SX5H325AMPCWYJUPYSCZJOY.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/9/9f/Vista_a%C3%A9rea_del_estadio_nacional_del_Per%C3%BA_%282021%29.jpg",
     aforo: "6vs6",
     detalles: {
       horarioAtencion:
@@ -29,19 +29,32 @@ const canchasData = [
         "Campo Techado",
         "Camerinos",
         "Estacionamiento",
-        "Grass Sintético",
+        "Grass Natural",
         "Tienda",
       ],
     },
   },
   {
     id: "2",
-    nombre: "Cancha B",
-    direccion: "Avenida 456, Ciudad",
+    nombre: "Estadio Monumental",
+    direccion: "Av. Javier Prado Este 7700, Ate 15026",
+    horarios: ["5 PM", "7 PM", "9 PM", "10 AM"],
+    imagen: "https://www.tvperu.gob.pe/sites/default/files/m_onumental.png",
+    aforo: "11vs11",
+    detalles: {
+      horarioAtencion:
+        "Lunes a Jueves 5 PM a 10 PM, Viernes a Domingo 10 AM a 11 PM",
+      caracteristicas: ["Campo Natural", "Camerinos", "Estacionamiento", "Bar"],
+    },
+  },
+  {
+    id: "3",
+    nombre: "Estadio Alejandro Villanueva",
+    direccion: "La Victoria 15018",
     horarios: ["5 PM", "7 PM", "9 PM", "10 AM"],
     imagen:
-      "https://elcomercio.pe/resizer/kM-bAF_r94OzvqVKqKnDfMZSX6I=/1200x675/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/ZQ4SX5H325AMPCWYJUPYSCZJOY.jpg",
-    aforo: "9vs9",
+      "https://cde.canaln.pe/deportes-alianza-lima-dejara-alquilar-estadio-matute-fpf-n439315-696x418-983032.jpg",
+    aforo: "11vs11",
     detalles: {
       horarioAtencion:
         "Lunes a Jueves 5 PM a 10 PM, Viernes a Domingo 10 AM a 11 PM",

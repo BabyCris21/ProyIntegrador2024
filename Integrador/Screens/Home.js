@@ -18,25 +18,29 @@ export default function HomeScreen() {
     {
       id: "1",
       name: "Cancha 1",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://i0.wp.com/www.construcanchas.com/wp-content/uploads/2021/03/fondo-3.jpg?resize=1060%2C571&ssl=1",
       isFavorite: true,
     },
     {
       id: "2",
       name: "Cancha 2",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://a1.elespanol.com/cronicaglobal/2024/08/20/culemania/palco/879672197_13361006_1024x576.jpg",
       isFavorite: true,
     },
     {
       id: "3",
       name: "Cancha 3",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://moyobamba.com/wp-content/uploads/elementor/thumbs/Cancha-qccrwjx6hqrjtt3dqbjkwr4cuv5dtzplfv6el15m28.jpg",
       isFavorite: true,
     },
     {
       id: "4",
       name: "Cancha 4",
-      image: "https://via.placeholder.com/150",
+      image:
+        "https://cespedecuador.com/wp-content/uploads/2023/02/Obten-el-Mayor-Beneficio-de-tu-Cancha-de-Futbol-Instalando-Cesped-Sintetico-Deportivo.jpg",
       isFavorite: true,
     },
   ]);
@@ -44,21 +48,25 @@ export default function HomeScreen() {
   const [rentedFields, setRentedFields] = useState([
     {
       id: "1",
-      name: "Cancha A",
-      location: "Parque Central",
+      name: "Wembley",
+      location: "Pasaje San Jose",
       date: "2024-11-10",
       time: "18:00",
-      image: "https://via.placeholder.com/150",
-      locationUrl: "https://www.google.com/maps/place/Parque+Central",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJsz7k2ich-63-7kWZoWWsuI18MDPprr497A&s",
+      locationUrl:
+        "https://www.google.com.pe/maps/place/Balcones+de+Wembley/@-14.0737791,-75.7368687,19.75z/data=!4m6!3m5!1s0x9110e34c410de373:0x3545e111b43ca162!8m2!3d-14.0737745!4d-75.7366184!16s%2Fg%2F11gxhfwc92?hl=es-419&entry=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3Dxº",
     },
     {
       id: "2",
       name: "Cancha B",
-      location: "Estadio Municipal",
+      location: "Carretera Panamericana Sur Km 301",
       date: "2024-11-12",
       time: "20:00",
-      image: "https://via.placeholder.com/150",
-      locationUrl: "https://www.google.com/maps/place/Estadio+Municipal",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6XH24rRZPW9jb8DUt-Ry0elbcJta0C7BQ_A&s",
+      locationUrl:
+        "https://www.google.com.pe/maps/place/Complejo+Deportivo+:+%22La+9+de+Ica%22/@-14.0504438,-75.7495096,17z/data=!3m1!4b1!4m6!3m5!1s0x9110e3e597c18fbd:0x870d9a7400748dd1!8m2!3d-14.050449!4d-75.7469347!16s%2Fg%2F11swtgjmv4?hl=es-419&entry=ttu&g_ep=EgoyMDI0MTAyOS4wIKXMDSoASAFQAw%3D%3D",
     },
   ]);
 
