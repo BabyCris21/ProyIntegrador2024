@@ -59,7 +59,7 @@ export default function HomeScreen() {
     },
     {
       id: "2",
-      name: "Cancha B",
+      name: "La 9 de Ica",
       location: "Carretera Panamericana Sur Km 301",
       date: "2024-11-12",
       time: "20:00",
