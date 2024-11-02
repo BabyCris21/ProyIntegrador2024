@@ -8,38 +8,44 @@ import {
   TextInput,
   Modal,
   Button,
+  Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Importa useNavigation para navegar
+import { useNavigation } from "@react-navigation/native";
 
 const Perfil = () => {
-  const navigation = useNavigation(); // Inicializa la navegación
+  const navigation = useNavigation();
 
-  // Datos simulados del usuario
   const [user, setUser] = useState({
-    photo: "https://www.mancity.com/meta/media/rhxfgi4x/kevin-de-bruyne.png",
+    photo:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Visit_of_Alberto_Fujimori%2C_President_of_Peru%2C_to_the_CEC_%28cropped%29.jpg/640px-Visit_of_Alberto_Fujimori%2C_President_of_Peru%2C_to_the_CEC_%28cropped%29.jpg",
     firstName: "Juan",
     lastName: "Pérez",
     phoneNumber: "987654321",
   });
 
-  // Estado para controlar el modal
   const [modalVisible, setModalVisible] = useState(false);
   const [editedUser, setEditedUser] = useState({ ...user });
 
-  // Funciones para los botones
   const handleEdit = () => {
     setModalVisible(true);
   };
 
   const handleSave = () => {
+    const phoneRegex = /^\d{9}$/;
+    if (!phoneRegex.test(editedUser.phoneNumber)) {
+      Alert.alert(
+        "Número de celular inválido",
+        "El número debe tener 9 dígitos."
+      );
+      return;
+    }
+
     setUser(editedUser);
     setModalVisible(false);
   };
 
   const handleLogout = () => {
-    // Aquí puedes implementar la lógica para cerrar sesión, como limpiar el estado de autenticación
     alert("Cerrando sesión...");
-    // Reiniciar la aplicación o navegar a la pantalla de inicio
     navigation.navigate("Login"); // Asegúrate de que 'Login' sea el nombre de tu pantalla de inicio
   };
 

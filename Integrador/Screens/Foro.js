@@ -61,22 +61,23 @@ const Foro = () => {
     // Puedes agregar más reseñas aquí
   ]);
 
-  const [newComment, setNewComment] = useState("");
+  const [newComments, setNewComments] = useState({});
 
   const handleCommentSubmit = (reviewId) => {
-    if (newComment.trim() === "") return;
+    const comment = newComments[reviewId];
+    if (!comment || comment.trim() === "") return;
 
     const updatedReviews = reviews.map((review) => {
       if (review.id === reviewId) {
         return {
           ...review,
-          comments: [...review.comments, newComment],
+          comments: [...review.comments, comment],
         };
       }
       return review;
     });
     setReviews(updatedReviews);
-    setNewComment("");
+    setNewComments((prev) => ({ ...prev, [reviewId]: "" })); // Reset the comment input for that review
   };
 
   const renderReview = ({ item }) => (
@@ -101,8 +102,10 @@ const Foro = () => {
       <TextInput
         style={styles.commentInput}
         placeholder="Deja un comentario al respecto..."
-        value={newComment}
-        onChangeText={setNewComment}
+        value={newComments[item.id] || ""}
+        onChangeText={(text) =>
+          setNewComments((prev) => ({ ...prev, [item.id]: text }))
+        }
       />
       <TouchableOpacity
         style={styles.commentButton}
