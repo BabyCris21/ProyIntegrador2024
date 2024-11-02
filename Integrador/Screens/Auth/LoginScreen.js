@@ -1,4 +1,3 @@
-// src/screens/LoginScreen.js
 import React, { useState } from "react";
 import {
   View,
@@ -71,6 +70,11 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity
         style={[styles.button, isButtonDisabled && styles.buttonDisabled]}
         disabled={isButtonDisabled}
+        onPress={() => {
+          // Aquí podrías añadir la lógica de autenticación
+          // Si la autenticación es exitosa, navega a Home
+          navigation.navigate("Menu"); // Navega a Menu al presionar el botón
+        }}
       >
         <Text style={styles.buttonText}>Ingresar</Text>
       </TouchableOpacity>
@@ -112,9 +116,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 5,
   },
-  passwordContainer: { position: "relative" },
-  showPasswordButton: { position: "absolute", right: 10, top: 15 },
-  showPasswordText: { color: "#0066cc" },
+  passwordContainer: {
+    position: "relative",
+  },
+  showPasswordButton: {
+    position: "absolute",
+    right: 10,
+    top: 15,
+  },
+  showPasswordText: {
+    color: "#0066cc",
+  },
   button: {
     backgroundColor: "#28a745",
     padding: 15,
@@ -122,8 +134,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  buttonDisabled: { backgroundColor: "#a5d6a7" },
-  buttonText: { color: "#fff", fontWeight: "bold" },
-  linkText: { color: "#0066cc", marginTop: 15, textAlign: "center" },
-  helperText: { color: "#888", fontSize: 12, marginBottom: 10 },
+  buttonDisabled: {
+    backgroundColor: "#a5d6a7",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  linkText: {
+    color: "#0066cc",
+    marginTop: 15,
+    textAlign: "center",
+  },
+  helperText: {
+    color: "#888",
+    fontSize: 12,
+    marginBottom: 10,
+  },
 });
