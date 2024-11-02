@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -50,12 +51,12 @@ const canchasData = [
   // Agrega más canchas aquí
 ];
 
-const ReservaCancha = () => {
+const Reserva = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCancha, setSelectedCancha] = useState(null);
   const [selectedHorario, setSelectedHorario] = useState("");
-  const [paymentOption, setPaymentOption] = useState(""); // Opción de pago
+  const [paymentOption, setPaymentOption] = useState("");
   const [creditCardDetails, setCreditCardDetails] = useState({
     cardNumber: "",
     cardHolder: "",
@@ -114,17 +115,13 @@ const ReservaCancha = () => {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            console.log(`Añadido a favoritos: ${item.nombre}`);
-          }}
+          onPress={() => console.log(`Añadido a favoritos: ${item.nombre}`)}
         >
           <Text>Añadir a Favoritos</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            console.log(`Ver ubicación de: ${item.nombre}`);
-          }}
+          onPress={() => console.log(`Ver ubicación de: ${item.nombre}`)}
         >
           <Text>Ver Ubicación</Text>
         </TouchableOpacity>
@@ -169,154 +166,154 @@ const ReservaCancha = () => {
                 style={styles.image}
               />
               <Text style={styles.modalTitle}>{selectedCancha.nombre}</Text>
-              <View style={styles.infoContainer}>
-                <View style={styles.infoBox}>
-                  <Text style={styles.infoLabel}>Dirección:</Text>
-                  <Text>{selectedCancha.direccion}</Text>
+              <ScrollView style={styles.scrollContainer}>
+                <View style={styles.infoContainer}>
+                  <View style={styles.infoBox}>
+                    <Text style={styles.infoLabel}>Dirección:</Text>
+                    <Text>{selectedCancha.direccion}</Text>
+                  </View>
+                  <View style={styles.infoBox}>
+                    <Text style={styles.infoLabel}>Aforo:</Text>
+                    <Text>{selectedCancha.aforo}</Text>
+                  </View>
+                  <View style={styles.infoBox}>
+                    <Text style={styles.infoLabel}>Horario de Atención:</Text>
+                    <Text>{selectedCancha.detalles.horarioAtencion}</Text>
+                  </View>
+                  <View style={styles.infoBox}>
+                    <Text style={styles.infoLabel}>Características:</Text>
+                    <Text>
+                      {selectedCancha.detalles.caracteristicas.join(", ")}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.infoBox}>
-                  <Text style={styles.infoLabel}>Aforo:</Text>
-                  <Text>{selectedCancha.aforo}</Text>
-                </View>
-                <View style={styles.infoBox}>
-                  <Text style={styles.infoLabel}>Horario de Atención:</Text>
-                  <Text>{selectedCancha.detalles.horarioAtencion}</Text>
-                </View>
-                <View style={styles.infoBox}>
-                  <Text style={styles.infoLabel}>Características:</Text>
-                  <Text>
-                    {selectedCancha.detalles.caracteristicas.join(", ")}
-                  </Text>
-                </View>
+                <Text style={styles.selectLabel}>Selecciona un Horario:</Text>
+                <Picker
+                  selectedValue={selectedHorario}
+                  style={styles.picker}
+                  onValueChange={(itemValue) => setSelectedHorario(itemValue)}
+                >
+                  {selectedCancha.horarios.map((horario) => (
+                    <Picker.Item
+                      key={horario}
+                      label={horario}
+                      value={horario}
+                    />
+                  ))}
+                </Picker>
+                <Text style={styles.selectLabel}>
+                  Selecciona un Método de Pago:
+                </Text>
+                <Picker
+                  selectedValue={paymentOption}
+                  style={styles.picker}
+                  onValueChange={(itemValue) => setPaymentOption(itemValue)}
+                >
+                  <Picker.Item label="Selecciona" value="" />
+                  <Picker.Item label="Yape" value="Yape" />
+                  <Picker.Item label="Plin" value="Plin" />
+                  <Picker.Item label="Tarjeta" value="Tarjeta" />
+                </Picker>
+                {paymentOption === "Tarjeta" && (
+                  <View>
+                    <TextInput
+                      placeholder="Número de tarjeta"
+                      style={styles.input}
+                      value={creditCardDetails.cardNumber}
+                      onChangeText={(text) =>
+                        setCreditCardDetails({
+                          ...creditCardDetails,
+                          cardNumber: text,
+                        })
+                      }
+                    />
+                    <TextInput
+                      placeholder="Nombre del titular"
+                      style={styles.input}
+                      value={creditCardDetails.cardHolder}
+                      onChangeText={(text) =>
+                        setCreditCardDetails({
+                          ...creditCardDetails,
+                          cardHolder: text,
+                        })
+                      }
+                    />
+                    <TextInput
+                      placeholder="Fecha de expiración (MM/AA)"
+                      style={styles.input}
+                      value={creditCardDetails.expirationDate}
+                      onChangeText={(text) =>
+                        setCreditCardDetails({
+                          ...creditCardDetails,
+                          expirationDate: text,
+                        })
+                      }
+                    />
+                    <TextInput
+                      placeholder="CVV"
+                      style={styles.input}
+                      value={creditCardDetails.cvv}
+                      onChangeText={(text) =>
+                        setCreditCardDetails({
+                          ...creditCardDetails,
+                          cvv: text,
+                        })
+                      }
+                      secureTextEntry
+                    />
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleReservar}
+                >
+                  <Text>Reservar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text>Cerrar</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {/* Resumen de transacción */}
+      <Modal
+        visible={transactionSummaryVisible}
+        animationType="slide"
+        onRequestClose={() => setTransactionSummaryVisible(false)}
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Resumen de Transacción</Text>
+            {paymentOption === "Tarjeta" && (
+              <View>
+                <Text>Número de tarjeta: {transactionDetails.cardNumber}</Text>
+                <Text>Nombre: {transactionDetails.name}</Text>
+                <Text>Fecha: {transactionDetails.date}</Text>
+                <Text>Hora: {selectedHorario}</Text>
               </View>
-              <Text style={styles.selectLabel}>Selecciona un Horario:</Text>
-              <Picker
-                selectedValue={selectedHorario}
-                style={styles.picker}
-                onValueChange={(itemValue) => setSelectedHorario(itemValue)}
-              >
-                {selectedCancha.horarios.map((horario) => (
-                  <Picker.Item key={horario} label={horario} value={horario} />
-                ))}
-              </Picker>
-
-              <Text style={styles.selectLabel}>
-                Selecciona un Método de Pago:
-              </Text>
-              <Picker
-                selectedValue={paymentOption}
-                style={styles.picker}
-                onValueChange={(itemValue) => setPaymentOption(itemValue)}
-              >
-                <Picker.Item label="Selecciona" value="" />
-                <Picker.Item label="Yape" value="Yape" />
-                <Picker.Item label="Plin" value="Plin" />
-                <Picker.Item label="Tarjeta" value="Tarjeta" />
-              </Picker>
-
-              {paymentOption === "Tarjeta" && (
-                <View>
-                  <TextInput
-                    placeholder="Número de tarjeta"
-                    style={styles.input}
-                    value={creditCardDetails.cardNumber}
-                    onChangeText={(text) =>
-                      setCreditCardDetails({
-                        ...creditCardDetails,
-                        cardNumber: text,
-                      })
-                    }
-                  />
-                  <TextInput
-                    placeholder="Nombre del titular"
-                    style={styles.input}
-                    value={creditCardDetails.cardHolder}
-                    onChangeText={(text) =>
-                      setCreditCardDetails({
-                        ...creditCardDetails,
-                        cardHolder: text,
-                      })
-                    }
-                  />
-                  <TextInput
-                    placeholder="Fecha de expiración (MM/AA)"
-                    style={styles.input}
-                    value={creditCardDetails.expirationDate}
-                    onChangeText={(text) =>
-                      setCreditCardDetails({
-                        ...creditCardDetails,
-                        expirationDate: text,
-                      })
-                    }
-                  />
-                  <TextInput
-                    placeholder="CVV"
-                    style={styles.input}
-                    value={creditCardDetails.cvv}
-                    onChangeText={(text) =>
-                      setCreditCardDetails({ ...creditCardDetails, cvv: text })
-                    }
-                  />
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleCreditCardSubmit}
-                  >
-                    <Text>Confirmar Pago con Tarjeta</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              <TouchableOpacity style={styles.button} onPress={handleReservar}>
-                <Text>Reservar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text>Cerrar</Text>
-              </TouchableOpacity>
-            </View>
+            )}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={confirmReservation}
+            >
+              <Text>Confirmar Reserva</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setTransactionSummaryVisible(false)}
+            >
+              <Text>Cerrar</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      )}
-
-      {transactionSummaryVisible && (
-        <Modal
-          visible={transactionSummaryVisible}
-          animationType="slide"
-          onRequestClose={() => setTransactionSummaryVisible(false)}
-          transparent={true}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Resumen de la Transacción</Text>
-              {paymentOption === "Tarjeta" && (
-                <View>
-                  <Text>
-                    Número de Tarjeta: {transactionDetails.cardNumber}
-                  </Text>
-                  <Text>Nombre: {transactionDetails.name}</Text>
-                  <Text>Fecha: {transactionDetails.date}</Text>
-                  <Text>Hora: {selectedHorario}</Text>
-                </View>
-              )}
-              <TouchableOpacity
-                style={styles.button}
-                onPress={confirmReservation}
-              >
-                <Text>Confirmar Reserva</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setTransactionSummaryVisible(false)}
-              >
-                <Text>Cerrar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -324,41 +321,37 @@ const ReservaCancha = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
+    backgroundColor: "#f8f8f8",
   },
   searchInput: {
+    height: 40,
+    borderColor: "gray",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 16,
+    paddingLeft: 10,
+    marginBottom: 20,
+    borderRadius: 5,
   },
   canchaContainer: {
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
+    backgroundColor: "white",
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 5,
+    elevation: 2,
   },
   canchaImage: {
     width: "100%",
-    height: 200,
-    borderRadius: 4,
+    height: 150,
+    borderRadius: 5,
   },
   canchaName: {
     fontSize: 18,
     fontWeight: "bold",
-    marginVertical: 4,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 4,
-    marginTop: 8,
+    marginTop: 10,
   },
   modalOverlay: {
     flex: 1,
@@ -367,46 +360,58 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
     width: "90%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    elevation: 5,
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 5,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: 10,
+  },
+  scrollContainer: {
+    maxHeight: 300,
   },
   infoContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   infoBox: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   infoLabel: {
+    fontWeight: "bold",
+  },
+  selectLabel: {
+    marginTop: 10,
     fontWeight: "bold",
   },
   picker: {
     height: 50,
     width: "100%",
-    marginBottom: 16,
-  },
-  selectLabel: {
-    fontWeight: "bold",
-    marginBottom: 4,
+    marginBottom: 20,
   },
   input: {
+    height: 40,
+    borderColor: "gray",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
-    marginBottom: 16,
+    paddingLeft: 10,
+    marginBottom: 10,
+    borderRadius: 5,
   },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 4,
+  button: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginVertical: 5,
   },
 });
 
-export default ReservaCancha;
+export default Reserva;
