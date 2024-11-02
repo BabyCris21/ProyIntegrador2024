@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   Linking,
+  ToastAndroid, // Agregado para el mensaje flotante
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -23,6 +24,18 @@ export default function HomeScreen() {
     {
       id: "2",
       name: "Cancha 2",
+      image: "https://via.placeholder.com/150",
+      isFavorite: true,
+    },
+    {
+      id: "3",
+      name: "Cancha 3",
+      image: "https://via.placeholder.com/150",
+      isFavorite: true,
+    },
+    {
+      id: "4",
+      name: "Cancha 4",
       image: "https://via.placeholder.com/150",
       isFavorite: true,
     },
@@ -50,6 +63,7 @@ export default function HomeScreen() {
   ]);
 
   const [searchText, setSearchText] = useState("");
+  const [removedFavorite, setRemovedFavorite] = useState(null); // Para guardar el favorito eliminado
 
   const filteredFavorites = favoriteFields.filter((field) =>
     field.name.toLowerCase().includes(searchText.toLowerCase())
@@ -58,6 +72,45 @@ export default function HomeScreen() {
   const filteredRented = rentedFields.filter((field) =>
     field.name.toLowerCase().includes(searchText.toLowerCase())
   );
+
+  const toggleFavorite = (id) => {
+    const updatedFavorites = favoriteFields.filter((field) => field.id !== id);
+
+    // Verificamos si se eliminó un favorito
+    if (updatedFavorites.length < favoriteFields.length) {
+      const removedField = favoriteFields.find((field) => field.id === id);
+      setRemovedFavorite(removedField); // Guardamos el favorito eliminado
+      setFavoriteFields(updatedFavorites);
+
+      // Mostrar el mensaje flotante
+      ToastAndroid.show(
+        `${removedField.name} se quitó de favoritos.`,
+        ToastAndroid.SHORT
+      );
+
+      // Deshacer después de 3 segundos
+      setTimeout(() => {
+        setRemovedFavorite(null);
+      }, 3000);
+    } else {
+      setFavoriteFields((prevFavorites) =>
+        prevFavorites.map((field) =>
+          field.id === id ? { ...field, isFavorite: !field.isFavorite } : field
+        )
+      );
+    }
+  };
+
+  const undoRemoveFavorite = () => {
+    if (removedFavorite) {
+      setFavoriteFields((prevFavorites) => [...prevFavorites, removedFavorite]);
+      setRemovedFavorite(null);
+      ToastAndroid.show(
+        `${removedFavorite.name} se agregó a favoritos nuevamente.`,
+        ToastAndroid.SHORT
+      );
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -82,7 +135,7 @@ export default function HomeScreen() {
           <View style={styles.favoriteFieldContainer}>
             <Image source={{ uri: item.image }} style={styles.fieldImage} />
             <Text style={styles.fieldName}>{item.name}</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
               <Icon
                 name={item.isFavorite ? "heart" : "heart-outline"}
                 size={24}
@@ -93,6 +146,16 @@ export default function HomeScreen() {
         )}
         showsHorizontalScrollIndicator={false}
       />
+
+      {/* Botón para deshacer */}
+      {removedFavorite && (
+        <TouchableOpacity
+          onPress={undoRemoveFavorite}
+          style={styles.undoButton}
+        >
+          <Text style={styles.undoText}>Deshacer</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Sección de Canchas Alquiladas */}
       <Text style={styles.sectionTitle}>Canchas Alquiladas</Text>
@@ -181,5 +244,16 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  undoButton: {
+    padding: 10,
+    backgroundColor: "#007AFF",
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  undoText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
   },
 });
