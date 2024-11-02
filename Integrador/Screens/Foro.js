@@ -100,7 +100,7 @@ const Foro = () => {
       </View>
       <TextInput
         style={styles.commentInput}
-        placeholder="Deja un comentario..."
+        placeholder="Deja un comentario al respecto..."
         value={newComment}
         onChangeText={setNewComment}
       />
