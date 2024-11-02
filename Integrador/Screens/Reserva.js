@@ -50,10 +50,10 @@ const canchasData = [
   {
     id: "3",
     nombre: "Estadio Alejandro Villanueva",
-    direccion: "La Victoria 15018",
+    direccion: "La Victoria",
     horarios: ["5 PM", "7 PM", "9 PM", "10 AM"],
     imagen:
-      "https://cde.canaln.pe/deportes-alianza-lima-dejara-alquilar-estadio-matute-fpf-n439315-696x418-983032.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp239X4_7vPUsR78QJRhzbbmkty7u5InLIrg&s",
     aforo: "11vs11",
     detalles: {
       horarioAtencion:
@@ -61,7 +61,6 @@ const canchasData = [
       caracteristicas: ["Campo Natural", "Camerinos", "Estacionamiento", "Bar"],
     },
   },
-  // Agrega más canchas aquí
 ];
 
 const Reserva = () => {
@@ -72,7 +71,7 @@ const Reserva = () => {
   const [paymentOption, setPaymentOption] = useState("");
   const [creditCardDetails, setCreditCardDetails] = useState({
     cardNumber: "",
-    cardHolder: "",
+    nombreTitular: "",
     expirationDate: "",
     cvv: "",
   });
@@ -90,16 +89,16 @@ const Reserva = () => {
         { text: "OK", onPress: () => setModalVisible(false) },
       ]);
     } else if (paymentOption === "Tarjeta") {
-      setTransactionSummaryVisible(true);
+      handleCreditCardSubmit();
     }
   };
 
   const handleCreditCardSubmit = () => {
     const summary = {
-      cardNumber: creditCardDetails.cardNumber.replace(/.(?=.{4})/g, "*"), // Blurred number
+      cardNumber: creditCardDetails.cardNumber.replace(/.(?=.{4})/g, "*"),
       date: new Date().toLocaleDateString(),
       time: selectedHorario,
-      name: creditCardDetails.cardHolder,
+      name: creditCardDetails.nombreTitular, // Cambiado a nombreTitular
     };
     setTransactionDetails(summary);
     setTransactionSummaryVisible(true);
@@ -113,6 +112,7 @@ const Reserva = () => {
         onPress: () => {
           Alert.alert("La cancha está reservada");
           setModalVisible(false);
+          setTransactionSummaryVisible(false);
         },
       },
     ]);
@@ -236,31 +236,33 @@ const Reserva = () => {
                       onChangeText={(text) =>
                         setCreditCardDetails({
                           ...creditCardDetails,
-                          cardNumber: text,
+                          cardNumber: text.replace(/\D/g, "").slice(0, 16),
                         })
                       }
                       keyboardType="numeric"
                     />
-
                     <TextInput
-                      placeholder="Nombre del titular"
-                      style={styles.input}
-                      value={creditCardDetails.cardHolder}
-                      onChangeText={(text) =>
-                        setCreditCardDetails({
-                          ...creditCardDetails,
-                          cardHolder: text,
-                        })
-                      }
-                    />
-                    <TextInput
-                      placeholder="Fecha de expiración (MM/AA)"
+                      placeholder="Fecha de expiración (MM/AAAA)"
                       style={styles.input}
                       value={creditCardDetails.expirationDate}
                       onChangeText={(text) =>
                         setCreditCardDetails({
                           ...creditCardDetails,
-                          expirationDate: text,
+                          expirationDate: text.replace(
+                            /(\d{2})(\d{4})/,
+                            "$1/$2"
+                          ),
+                        })
+                      }
+                    />
+                    <TextInput
+                      placeholder="Datos del titular"
+                      style={styles.input}
+                      value={creditCardDetails.nombreTitular}
+                      onChangeText={(text) =>
+                        setCreditCardDetails({
+                          ...creditCardDetails,
+                          nombreTitular: text,
                         })
                       }
                     />
@@ -271,24 +273,28 @@ const Reserva = () => {
                       onChangeText={(text) =>
                         setCreditCardDetails({
                           ...creditCardDetails,
-                          cvv: text,
+                          cvv: text.replace(/\D/g, "").slice(0, 3),
                         })
                       }
                       keyboardType="numeric"
+                      secureTextEntry
                     />
                   </View>
                 )}
                 <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleReservar}
+                  style={styles.reserveButton}
+                  onPress={() => {
+                    handleReservar();
+                    confirmReservation();
+                  }}
                 >
-                  <Text>Reservar</Text>
+                  <Text style={styles.reserveButtonText}>Reservar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.button}
+                  style={styles.closeButton}
                   onPress={() => setModalVisible(false)}
                 >
-                  <Text>Cerrar</Text>
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
                 </TouchableOpacity>
               </ScrollView>
             </View>
@@ -296,35 +302,43 @@ const Reserva = () => {
         </Modal>
       )}
 
-      {/* Transaction Summary Modal */}
       <Modal
         visible={transactionSummaryVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setTransactionSummaryVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Resumen de la Transacción</Text>
-            <Text>Número de tarjeta: {transactionDetails.cardNumber}</Text>
-            <Text>Fecha: {transactionDetails.date}</Text>
-            <Text>Hora: {transactionDetails.time}</Text>
-            <Text>Nombre del titular: {transactionDetails.name}</Text>
-
-            <View style={styles.rowButtonsContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={confirmReservation}
-              >
-                <Text>Confirmar Reserva</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setTransactionSummaryVisible(false)}
-              >
-                <Text>Cerrar</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.transactionTitle}>
+              Resumen de la Transacción
+            </Text>
+            <Text style={styles.transactionDetail}>
+              Método de Pago: {paymentOption}
+            </Text>
+            <Text style={styles.transactionDetail}>
+              Número de Tarjeta: {transactionDetails.cardNumber}
+            </Text>
+            <Text style={styles.transactionDetail}>
+              Fecha: {transactionDetails.date}
+            </Text>
+            <Text style={styles.transactionDetail}>
+              Nombre del Titular: {transactionDetails.name}
+            </Text>
+            <Text style={styles.transactionDetail}>
+              Hora de Reserva: {selectedHorario}
+            </Text>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={confirmReservation}
+            >
+              <Text style={styles.confirmButtonText}>Confirmar Reserva</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setTransactionSummaryVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -336,71 +350,73 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#f5f5f5",
   },
   searchInput: {
+    height: 40,
+    borderColor: "gray",
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
   canchaContainer: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
     marginBottom: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     padding: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 3,
   },
   canchaImage: {
     width: "100%",
-    height: 200,
-    borderRadius: 5,
+    height: 150,
+    borderRadius: 10,
   },
   canchaName: {
     fontSize: 18,
     fontWeight: "bold",
-    marginVertical: 5,
+    marginTop: 10,
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  rowButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     marginTop: 10,
   },
-
   button: {
-    backgroundColor: "#007BFF",
     padding: 10,
+    backgroundColor: "#007bff",
     borderRadius: 5,
-    alignItems: "center",
-    marginVertical: 5,
-    flex: 1,
-    marginHorizontal: 5,
+    color: "#fff",
   },
   modalOverlay: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
-    width: "90%",
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
+    width: "90%",
+    maxHeight: "90%",
   },
   image: {
     width: "100%",
-    height: 200,
-    borderRadius: 5,
+    height: 150,
+    borderRadius: 10,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  scrollContainer: {
+    maxHeight: 300,
   },
   infoContainer: {
     marginBottom: 20,
@@ -418,25 +434,56 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   input: {
+    height: 40,
+    borderColor: "gray",
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 5,
-    padding: 10,
+    paddingHorizontal: 10,
     marginBottom: 10,
   },
-  closeButton: {
-    marginTop: 10,
+  reserveButton: {
+    backgroundColor: "#28a745",
     padding: 10,
-    alignItems: "center",
-    backgroundColor: "#FF0000",
     borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
   },
-
-  scrollContainer: {
-    maxHeight: 400, // Adjust as necessary to prevent overflow
+  reserveButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  closeButton: {
+    backgroundColor: "#dc3545",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  transactionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  transactionDetail: {
+    marginBottom: 5,
+  },
+  confirmButton: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 

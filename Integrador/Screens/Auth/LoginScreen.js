@@ -34,6 +34,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>PLAY FIELD</Text>
       <Text style={styles.title}>Bienvenido</Text>
       <Text style={styles.subtitle}>Iniciar Sesión</Text>
 
